@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<view class="listBox">
-			<view class="item" v-for="(item,index) in list " :key="index">
+			<view class="item" v-for="(item,index) in list " :key="index" @longpress="logoTime(item)">
 				<view class="title">
 					{{item.title}}
 				</view>
@@ -9,8 +9,9 @@
 					{{item.content}}
 				</view>
 			</view>
+			<u-modal v-model="del" :content="content" :async-close="true" @confirm="delItemFun" show-cancel-button confirm-text='放弃了' cancel-text="揍TA!"  confirm-color="red" title="放弃复仇了吗？"></u-modal>
 		</view>
-		<u-tabbar v-model="current" :list="tabList" active-color="skyblue"></u-tabbar>
+		<u-tabbar v-model="current" :list="tabList" active-color="skyblue" @change="gopage"></u-tabbar>
 	</view>
 </template>
 
@@ -18,10 +19,8 @@
 	export default {
 		data() {
 			return {
-				// userInfo: uni.getStorageSync('userInfo'),
-				userInfo: {
-					_id: "0a4429175fcd7e5c00e1c4e5430a1bf6"
-				},
+				del: false,
+				userInfo: uni.getStorageSync('userInfo'),
 				list: [],
 				tabList: [{
 						iconPath: "file-text",
@@ -34,10 +33,14 @@
 						text: '开始记仇',
 					}
 				],
-				current: 0
+				current: 0,
+				content: "",
+				delItem: "",
+				index:0,
 			}
 		},
 		onLoad() {
+			console.log(this.userInfo._id);
 			if (this.userInfo !== '') {
 				this.getList()
 			} else {
@@ -50,7 +53,40 @@
 			}
 		},
 		methods: {
+			delItemFun() {
+				uniCloud.callFunction({
+					name: 'deleteZhang',
+					data: {
+						id: this.delItem._id
+					},
+					success: (res) => {
+						console.log(res);
+						if (res.result.deleted) {
+							this.list.splice(this.index, 1)
+							this.$u.toast('你居然放弃复仇！')
+							this.del = false;
+						}
+					}
+				})
+			},
+			
+			logoTime(item,index) {
+				console.log(2222);
+				this.delItem = item
+				this.index = index
+				this.content = item.content + '这事就算了吗！'
+				this.del = true;
+			},
+			gopage(index) {
+				if (index == 1) {
+					uni.reLaunch({
+						url: '../pushMsg/pushMsg'
+					})
+				}
+			},
 			getList() {
+				console.log('getlist');
+				console.log(this.userInfo);
 				uniCloud.callFunction({
 					name: 'getList',
 					data: {
@@ -59,6 +95,9 @@
 					success: (res) => {
 						console.log(res);
 						this.list = res.result.data.reverse()
+					},
+					fail: (err) => {
+						console.log(err);
 					}
 
 				})
@@ -87,20 +126,23 @@
 									name: 'getUserPhone',
 									data: {
 										access_token: msg.authResult.access_token,
-										openid: msg.authResult.openid
+										openid: msg.authResult.openid,
+										pass:'1a2b3c4d'
 									}
 
 								}).then(res => {
+									console.log(res);
 									uni.closeAuthView()
 									this.$u.toast('登录成功')
-									this.
 									uni.setStorage({
 										key: "userInfo",
 										data: res.result.userInfo,
 										success: () => {
+											this.userInfo = res.result.userInfo
 											this.getList()
 										}
 									})
+									
 								}).catch(err => {
 									uni.closeAuthView()
 									this.$u.toast('登录失败')

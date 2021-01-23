@@ -12,12 +12,21 @@ exports.main = async (event, context) => {
 		openid: event.openid
 	})
 	console.log(res);
-	const data = {}
-	if (res.result.success) {
-		data = await uniID.register({
-			username: res.result.phonenumber,
-			password: "1a2b3c4d"
+	var data = {}
+	var pushVal = {}
+	if (res.code == 0) {
+		pushVal = await uniID.register({
+			username: res.phoneNumber,
+			password: event.pass
 		})
+		if (data.code != 0) {
+			data = await uniID.login({
+				username: res.phoneNumber,
+				password: event.pass
+			})
+		}else{
+			data = pushVal
+		}
 	}
 
 	//返回数据给客户端

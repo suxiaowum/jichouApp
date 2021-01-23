@@ -6,19 +6,17 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTitleText": "记仇本"
 			}
+		}, {
+			"path": "pages/pushMsg/pushMsg",
+			"style": {
+				"navigationBarTitleText": "开始记仇",
+				"enablePullDownRefresh": false
+			}
+
 		}
-	    ,{
-            "path" : "pages/pushMsg/pushMsg",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "开始记仇",
-                "enablePullDownRefresh": false
-            }
-            
-        }
-    ],
+	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "记仇本",
