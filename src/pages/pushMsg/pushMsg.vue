@@ -132,6 +132,7 @@
 							console.log(res);
 							this.$u.toast('保存成功')
 							this.value = ''
+							this.name = ""
 						},
 						complete: (err) => {
 							console.log(err);

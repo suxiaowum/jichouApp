@@ -9,7 +9,8 @@
 					{{item.content}}
 				</view>
 			</view>
-			<u-modal v-model="del" :content="content" :async-close="true" @confirm="delItemFun" show-cancel-button confirm-text='放弃了' cancel-text="揍TA!"  confirm-color="red" title="放弃复仇了吗？"></u-modal>
+			<u-modal v-model="del" :content="content" :async-close="true" @confirm="delItemFun" show-cancel-button confirm-text='放弃了'
+			 cancel-text="揍TA!" confirm-color="red" title="放弃复仇了吗？"></u-modal>
 		</view>
 		<u-tabbar v-model="current" :list="tabList" active-color="skyblue" @change="gopage"></u-tabbar>
 	</view>
@@ -36,10 +37,11 @@
 				current: 0,
 				content: "",
 				delItem: "",
-				index:0,
+				index: 0,
 			}
 		},
 		onLoad() {
+
 			console.log(this.userInfo._id);
 			if (this.userInfo !== '') {
 				this.getList()
@@ -69,8 +71,8 @@
 					}
 				})
 			},
-			
-			logoTime(item,index) {
+
+			logoTime(item, index) {
 				console.log(2222);
 				this.delItem = item
 				this.index = index
@@ -127,7 +129,7 @@
 									data: {
 										access_token: msg.authResult.access_token,
 										openid: msg.authResult.openid,
-										pass:'1a2b3c4d'
+										pass: '1a2b3c4d'
 									}
 
 								}).then(res => {
@@ -142,18 +144,23 @@
 											this.getList()
 										}
 									})
-									
+
 								}).catch(err => {
 									uni.closeAuthView()
 									this.$u.toast('登录失败')
+									this.$u.toast(err.errMsg)
 									console.log(err);
 								})
 							},
 							fail: (err) => {
 								console.log(err);
-								this.$u.toast('登录失败')
+								this.$u.toast(err.errMsg + err.errCode)
 							}
 						})
+					},
+					fail: (res) => {
+						this.$u.toast(res.errMsg + res.errCode)
+						// console.log(res.errMsg)
 					}
 				})
 			}
